@@ -1,0 +1,29 @@
+nav {
+  position: fixed;
+  top: 10px;
+  border: 2px solid white;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.navDiv {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.navLink {
+  padding: 10px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+html {
+  background-color: black;
+  color: white;
+}
+
+.navOuter {
+  display: flex;
+  justify-content: center;
+}
