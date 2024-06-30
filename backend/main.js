@@ -1,29 +1,35 @@
-const express = require('express');
-const https = require('https');
-const socket_io = require('socket.io');
-const fs = require('fs');
-const path = require('path');
+import express from 'express';
+import https from 'https';
+import { Server } from 'socket.io';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const PORT = 3001;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const HOSTNAME = '0.0.0.0';
 
 // Initializing servers
 const App = express();
-App.use(express.static(path.join(__dirname, '../frontend/build')));
+App.use(express.static(path.join(__dirname, 'build')));
+
 const HTTPSserver = https.createServer({
     key: fs.readFileSync('../localhost+2-key.pem'),
     cert: fs.readFileSync('../localhost+2.pem')
 }, App);
-const IO = new socket_io.Server(HTTPSserver);
+const IO = new Server(HTTPSserver);
 
 
 // Routes
 
-// App.get('/', (request, response) => res.send('Hello World!'));
-App.get('/home', (request, response) => {
-
+App.get('/home', function (request, response) {
+    response.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
+App.get("/test", (req, res) => {
+    res.send("Hello World!");
+});
 
 // WebSockets
 
@@ -33,4 +39,6 @@ IO.on('connection', socket => {
 });
 
 
-HTTPSserver.listen(PORT, HOSTNAME, () => console.log('HTTPS server running on https://' + HOSTNAME + ':' + PORT));
+HTTPSserver.listen(process.env.PORT, '0.0.0.0', () => {
+    if(process.env.node_env === 'development') console.log('HTTPS server running on https://0.0.0.0:' + process.env.PORT);
+});
